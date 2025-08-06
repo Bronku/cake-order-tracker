@@ -4,3 +4,4 @@ File = "foo.db"
 [Server]
 Addr = ":8080"
 ReadHeaderTimeout = "3s"
+RequestTimeout = "10s"
