@@ -1,0 +1,71 @@
+{{define "title"}}
+Zamówienia
+{{end}}
+{{define "main"}}
+<main>
+    <form class="search-container" hx-get="/orders/search" hx-target="#results-table"
+        hx-trigger="keyup delay:500ms, change">
+        <label>Data początkowa
+            <input type="date" value="{{.First}}" name="from">
+        </label>
+        <label>Data końcowa
+            <input type="date" value="{{.Last}}" name="to">
+        </label>
+    </form>
+    <div id="results-table" class="scrollable">
+        {{template "orders-table" .Orders}}
+    </div>
+</main>
+<style>
+    .hidden {
+        display: none;
+    }
+
+    .active {
+        background-color: #e6f2ff;
+    }
+</style>
+{{end}}
+{{define "orders-table"}}
+<table id="orders_table">
+    <thead>
+        <tr>
+            <th>Numer zamówienia</th>
+            <th>Klient</th>
+            <th>Lokalizacja</th>
+            <th>Data zamówienia</th>
+            <th>Pozostało do zapłaty</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range .}}
+        <tr class="clickable" onclick="toggleDetails(this)">
+            <th><a href="/order/{{.ID}}">#{{.ID}}</a></th>
+            <th>{{.Surname}} {{.Name}} {{.Phone}}</th>
+            <th>{{.Location}}</th>
+            <th>{{.Date.Format "2006-01-02"}}</th>
+            <th>{{.Total}} PLN</th>
+            <th>{{.Status}}</th>
+        </tr>
+        <tr class="hidden">
+            <td colspan="6" class="details-content">
+            {{template "order_info" .}}
+            </td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>
+{{end}}
+{{define "order_info"}}
+    <table>
+        {{range .OrderItems}}
+        <tr>
+            <th>{{.Product.Name}}<br><small>ID: {{.ProductID}}</small></th>
+            <th><small>Cena:</small><br>{{.Product.Price}} PLN</th>
+            <th><small>Ilość:</small><br>{{.Amount}}</th>
+            <th><small>Razem:</small><br>{{.Total}} PLN</th>
+        </tr>
+        {{end}}
+    </table>
+{{end}}

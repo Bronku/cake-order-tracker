@@ -1,0 +1,113 @@
+{{define "title"}}
+    {{if .Order.ID}}
+    Edytuj zamówienie #{{.Order.ID}}
+    {{else}}
+    Nowe zamówienie
+    {{end}}
+{{end}}
+{{define "main"}}
+    <main>
+        <form method="post" class="order">
+            {{with .Order}}
+            <div class="order-contents">
+                <div>
+                    <h2>Dane zamówienia</h2>
+                    <label>
+                        <input hidden="hidden" name="id" value="{{.ID}}">
+                    </label>
+                    <label>Imię
+                        <input type="text" name="name" value="{{.Name}}">
+                    </label>
+                    <label>Nazwisko
+                        <input type="text" name="surname" value="{{.Surname}}">
+                    </label>
+                    <label>Numer telefonu
+                        <input type="tel" name="phone" value="{{.Phone}}">
+                    </label>
+                    <label>Lokalizacja
+                        <select name="location">
+                            <option {{ if eq .Location "Kartuzy" }}selected{{ end }} value="Kartuzy">Kartuzy</option>
+                            <option {{ if eq .Location "Somonino" }}selected{{ end }} value="Somonino">Somonino</option>
+                        </select>
+                    </label>
+                    <label>Data dostawy
+                        {{if .ID}}
+                        <input type="date" name="date" value="{{.Date.Format "2006-01-02"}}" required>
+                        {{else}}
+                        <input type="date" name="date" required>
+                        {{end}}
+                    </label>
+                    <label>Status
+                        <select name="status">
+                            <option {{ if eq .Status "accepted" }}selected{{ end }} value="accepted">accepted</option>
+                            <option {{ if eq .Status "done" }}selected{{ end }} value="done">done</option>
+                        </select>
+                    </label>
+                    <label>Zaliczka
+                        <input type="number" name="paid" min="0" value="{{.Prepaid}}">
+                    </label>
+                </div>
+                <div>
+                    <h2>Dodane Ciasta</h2>
+                    <div class="scrollable">
+                        <table id="basket_table" >
+                        </table>
+                    </div>
+                    <ul id="basket"  class="scrollable">
+                    </ul>
+                </div>
+
+                <div>
+                    <label>
+                        <small>Total:</small><br>
+                        <p id="total-price">100PLN</p>
+                    </label>
+                    <button type="submit">Zapisz</button>
+                </div>
+            </div>
+            {{end}}
+            {{with .Catalogue}}
+                <div>
+                    <h2>Katalog</h2>
+                    <div class="scrollable">
+                        <table>
+                            {{range .}}
+                            <tr>
+                                <th>{{.Name}}<br><small>#{{.ID}}</small></th>
+                                <th>{{.Price}}PLN</th>
+                                <th>
+                                    <button type=button onClick="addCake({{.ID}},{{.Name}}, {{.Price}}, 1)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </th>
+                            </tr>
+                            {{end}}
+                        </table>
+                    </div>
+                </div>
+            {{end}}
+        </form>
+    </main>
+    <template id="basket_element_template">
+        <tr>
+            <th class="cake-name">Name</th>
+            <th class="cake-price">Price</th>
+            <th>
+                <label>
+                    <input type="number" min="0">
+                </label>
+            </th>
+            <th class="cake-total">Total</th>
+            <th>
+                <button type=button>
+                    <i class="fa-solid fa-minus"></i>
+                </button>
+            </th>
+        </tr>
+    </template>
+    <script>
+        {{range .Order.OrderItems}}
+        addCake({{.ProductID}},{{.Product.Name}}, {{.Product.Price}}, {{.Amount}})
+        {{end}}
+    </script>
+{{end}}

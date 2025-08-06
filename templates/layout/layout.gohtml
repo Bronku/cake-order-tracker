@@ -1,0 +1,28 @@
+{{define "layout"}}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>{{template "title" .}}</title>
+    <script src="/static/htmx2.04.js" defer></script>
+    <script src="/static/order.js" ></script>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/solid.css">
+</head>
+
+<body>
+    <aside>
+        <nav>{{template "nav" .}}</nav>
+    </aside>
+    <div class="app-body">
+        <header>
+            <h1>{{template "title" .}}</h1>
+        </header>
+        {{template "main" .}}
+    </div>
+</body>
+
+</html>
+{{end}}

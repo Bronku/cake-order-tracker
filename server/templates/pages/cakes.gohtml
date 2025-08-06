@@ -1,0 +1,21 @@
+{{define "title"}}
+Cakes
+{{end}}
+{{define "main"}}
+<main>
+    <table>
+        <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Price</th>
+        </tr>
+        {{range .}}
+        <tr>
+            <th><a href="/cake/{{.ID}}">edit</a></th>
+            <th>{{.Name}}</th>
+            <th>{{.Price}}</th>
+        </tr>
+        {{end}}
+    </table>
+</main>
+{{end}}

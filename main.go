@@ -2,37 +2,24 @@ package main
 
 import (
 	"context"
+	"embed"
 	_ "embed"
 	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/Bronku/iroon/models"
 	"github.com/Bronku/iroon/store"
-	"github.com/BurntSushi/toml"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
-type config struct {
-	Database struct {
-		File string
-	}
-
-	Server struct {
-		Addr              string
-		ReadHeaderTimeout time.Duration
-		RequestTimeout    time.Duration
-	}
-}
-
-//go:embed config.default.toml
-var defaultConfig string
+//go:embed static/*
+var static embed.FS
 
 type contextKey string
 
@@ -40,19 +27,11 @@ const dbContextKey = contextKey("db")
 const orderContextKey = contextKey("order")
 
 func main() {
-	// load config
-	var conf config
-	_, err := toml.Decode(defaultConfig, &conf)
-	if err != nil {
-		log.Fatal(err)
-	}
-	_, err = toml.DecodeFile("config.toml", &conf)
-	if err != nil {
-		log.Println("using default config")
-	}
+	loadConfig()
+	loadTemplates()
 
 	// load database
-	db, err := store.LoadStore(conf.Database.File)
+	db, err := store.LoadStore(config.Database.File)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -62,29 +41,24 @@ func main() {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
-	r.Use(middleware.Timeout(conf.Server.RequestTimeout))
+	r.Use(middleware.Timeout(config.Server.RequestTimeout))
 
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("welcome"))
-	})
+	r.Get("/", http.RedirectHandler("/orders", http.StatusSeeOther).ServeHTTP)
+	r.Get("/static/", http.FileServerFS(static).ServeHTTP)
 
 	r.Route("/orders", func(r chi.Router) {
 		r.Use(middleware.WithValue(dbContextKey, db))
 		r.Route("/{orderID}", func(r chi.Router) {
-			r.Use(OrderCtx) // Load the *Article on the request context
+			r.Use(OrderCtx)
 			r.Get("/", getOrder)
-			// r.Get("/", GetArticle)       // GET /articles/123
-			// r.Put("/", UpdateArticle)    // PUT /articles/123
-			// r.Delete("/", DeleteArticle) // DELETE /articles/123
 		})
-
 	})
 
 	// start server
 	server := &http.Server{
 		Handler:           r,
-		Addr:              conf.Server.Addr,
-		ReadHeaderTimeout: conf.Server.ReadHeaderTimeout,
+		Addr:              config.Server.Addr,
+		ReadHeaderTimeout: config.Server.ReadHeaderTimeout,
 	}
 	err = server.ListenAndServe()
 	if err != nil {

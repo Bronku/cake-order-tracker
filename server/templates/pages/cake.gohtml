@@ -1,0 +1,24 @@
+{{define "title"}}
+Cake {{.ID}}
+{{end}}
+{{define "main"}}
+<main>
+    <form method="post">
+        <div>
+            <h2>Info</h2>
+            <label>
+                <input hidden="hidden" name="id" value="{{.ID}}">
+            </label>
+            <label>name</label>
+            <label>
+                <input type="text" name="name" value="{{.Name}}">
+            </label>
+            <label>price</label>
+            <label>
+                <input type="number" name="price" min="0" value="{{.Price}}">
+            </label>
+        </div>
+        <button type="submit">submit</button>
+    </form>
+</main>
+{{end}}
