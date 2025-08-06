@@ -1,11 +1,6 @@
 [Database]
 File = "foo.db"
 
-[Authentication]
-DefaultLogin = "admin"
-DefaultPassword = "secret"
-SessionExpiration = "24h"
-
 [Server]
 Addr = ":8080"
 ReadHeaderTimeout = "3s"

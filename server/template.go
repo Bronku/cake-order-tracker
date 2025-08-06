@@ -2,11 +2,10 @@ package server
 
 import (
 	"embed"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
-
-	"github.com/Bronku/iroon/logging"
 )
 
 //go:embed templates/*
@@ -28,14 +27,14 @@ func (h *Server) loadTemplates() {
 
 func (h *Server) render(fetch fetcher, templateFile string, templateEntry string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		data, code, err := fetch(r)
+		data, _, err := fetch(r)
 		if err != nil {
-			logging.ErrorPage(err, code).ServeHTTP(w, r)
+			fmt.Fprint(w, err)
 			return
 		}
 		err = h.tmpl[templateFile].ExecuteTemplate(w, templateEntry, data)
 		if err != nil {
-			logging.ErrorPage(err, http.StatusInternalServerError).ServeHTTP(w, r)
+			fmt.Fprint(w, err)
 			return
 		}
 		w.Header().Set("content-type", "text/html")

@@ -2,31 +2,17 @@ package main
 
 import (
 	_ "embed"
-	"errors"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
-	"github.com/Bronku/iroon/auth"
-	"github.com/Bronku/iroon/logging"
-	"github.com/Bronku/iroon/models"
 	"github.com/Bronku/iroon/server"
 	"github.com/BurntSushi/toml"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
 type config struct {
 	Database struct {
 		File string
-	}
-
-	Authentication struct {
-		auth.Config
-		DefaultLogin    string
-		DefaultPassword string
 	}
 
 	Server struct {
@@ -51,34 +37,14 @@ func main() {
 	}
 
 	// load database
-	newLogger := logger.New(
-		log.New(os.Stdout, "\r\n", log.LstdFlags),
-		logger.Config{
-			IgnoreRecordNotFoundError: true},
-	)
-	db, err := gorm.Open(sqlite.Open(conf.Database.File), &gorm.Config{
-		Logger: newLogger,
-	})
+	db, err := store.loadStore(conf.Database.File)
 	if err != nil {
-		log.Fatal("failed to connect database")
-	}
-	err = db.AutoMigrate(&models.Order{}, &models.OrderItem{}, &models.Product{})
-	if err != nil {
-		log.Fatal("couldn't migrate database")
-	}
-
-	// load auth
-	authenticator := auth.New(db, conf.Authentication.Config)
-	err = authenticator.AddUser(conf.Authentication.DefaultLogin, conf.Authentication.DefaultPassword)
-	if err != nil && !errors.Is(err, auth.ErrUsernameTaken) {
-		log.Println("add user:", err)
+		log.Panic(err)
 	}
 
 	// load server
 	h := server.New(db)
 	var handler http.Handler = h
-	handler = authenticator.Middleware(handler)
-	handler = logging.Middleware(handler)
 	log.Println("starting server")
 
 	// start server

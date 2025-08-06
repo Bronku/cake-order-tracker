@@ -12,8 +12,6 @@ require (
 )
 
 require (
-	golang.org/x/crypto v0.36.0
-	golang.org/x/sys v0.31.0 // indirect
 	gorm.io/driver/sqlite v1.6.0
 	gorm.io/gorm v1.30.0
 )
