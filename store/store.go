@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-func loadStore(dsn string) (*gorm.DB, error) {
+func LoadStore(dsn string) (*gorm.DB, error) {
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags),
 		logger.Config{

@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/Bronku/iroon/server"
+	"github.com/Bronku/iroon/store"
 	"github.com/BurntSushi/toml"
 )
 
@@ -37,7 +38,7 @@ func main() {
 	}
 
 	// load database
-	db, err := store.loadStore(conf.Database.File)
+	db, err := store.LoadStore(conf.Database.File)
 	if err != nil {
 		log.Panic(err)
 	}
