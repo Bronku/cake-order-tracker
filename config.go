@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "embed"
+	"log"
 	"time"
 
 	"github.com/BurntSushi/toml"
@@ -25,7 +26,7 @@ var config struct {
 func loadConfig() {
 	_, err := toml.Decode(defaultConfig, &config)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	_, _ = toml.DecodeFile("config.toml", &config)
 }

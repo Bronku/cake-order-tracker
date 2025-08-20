@@ -5,7 +5,6 @@ import (
 	"embed"
 	_ "embed"
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -33,7 +32,7 @@ func main() {
 	// load database
 	db, err := store.LoadStore(config.Database.File)
 	if err != nil {
-		log.Panic(err)
+		log.Fatal(err)
 	}
 
 	r := chi.NewRouter()
@@ -44,7 +43,10 @@ func main() {
 	r.Use(middleware.Timeout(config.Server.RequestTimeout))
 
 	r.Get("/", http.RedirectHandler("/orders", http.StatusSeeOther).ServeHTTP)
-	r.Get("/static/", http.FileServerFS(static).ServeHTTP)
+
+	// Serve static files from the "./assets" directory when accessing "/assets/*"
+	fileServer := http.StripPrefix("/static/", http.FileServer(http.FS(static)))
+	r.Handle("/static/*", fileServer)
 
 	r.Route("/orders", func(r chi.Router) {
 		r.Use(middleware.WithValue(dbContextKey, db))
@@ -73,7 +75,7 @@ func OrderCtx(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		db := r.Context().Value(dbContextKey).(*gorm.DB)
 		if db == nil {
-			panic(errNoContextValue)
+			log.Fatal(errNoContextValue)
 		}
 		var order *models.Order
 		var err error
@@ -103,7 +105,7 @@ func getOrder(w http.ResponseWriter, r *http.Request) {
 
 	db = r.Context().Value(dbContextKey).(*gorm.DB)
 	if db == nil {
-		panic(errNoContextValue)
+		log.Fatal(errNoContextValue)
 	}
 
 	err = db.Find(&catalogue).Error
@@ -114,8 +116,11 @@ func getOrder(w http.ResponseWriter, r *http.Request) {
 
 	order = r.Context().Value(orderContextKey).(*models.Order)
 	if order == nil {
-		panic(errNoContextValue)
+		log.Fatal(errNoContextValue)
 	}
 
-	fmt.Fprint(w, "order: ", order, "\ncatalogue: ", catalogue)
+	templates["order.gohtml"].ExecuteTemplate(w, "layout", struct {
+		Order     models.Order
+		Catalogue []models.Product
+	}{*order, catalogue})
 }
