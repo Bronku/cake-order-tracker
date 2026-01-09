@@ -6,8 +6,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Bronku/iroon/models"
-	"github.com/Bronku/iroon/store"
+	"github.com/Bronku/cake-order-tracker/models"
+	"github.com/Bronku/cake-order-tracker/store"
 )
 
 type Authenticator struct {

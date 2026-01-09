@@ -3,8 +3,8 @@ package store
 import (
 	"errors"
 
-	"github.com/Bronku/iroon/crypto"
-	"github.com/Bronku/iroon/models"
+	"github.com/Bronku/cake-order-tracker/crypto"
+	"github.com/Bronku/cake-order-tracker/models"
 )
 
 func (s *Store) AddUser(login, password string) error {

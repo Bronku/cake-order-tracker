@@ -3,6 +3,7 @@ package store
 import (
 	"embed"
 	_ "embed"
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -26,6 +27,11 @@ func (s *Store) loadFile(file string) {
 	_, err = s.db.Exec(string(query))
 	if err != nil {
 		log.Fatal("error executing migration: ", file, err)
+	}
+
+	_, err = s.db.Exec(fmt.Sprintf("PRAGMA user_version = %d;", version))
+	if err != nil {
+		log.Fatal("error setting user_version:", err)
 	}
 }
 

@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Bronku/iroon/models"
+	"github.com/Bronku/cake-order-tracker/models"
 )
 
 func monthInterval(y int, m time.Month) (firstDay, lastDay time.Time) {

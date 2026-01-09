@@ -3,7 +3,7 @@ package store
 import (
 	"time"
 
-	"github.com/Bronku/iroon/models"
+	"github.com/Bronku/cake-order-tracker/models"
 )
 
 func (s *Store) AddSession(token, userName string, expiration time.Time) error {

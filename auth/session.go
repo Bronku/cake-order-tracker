@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Bronku/iroon/models"
+	"github.com/Bronku/cake-order-tracker/models"
 )
 
 func (a *Authenticator) getSession(r *http.Request) (models.Token, error) {

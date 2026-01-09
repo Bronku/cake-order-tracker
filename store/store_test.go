@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Bronku/iroon/models"
+	"github.com/Bronku/cake-order-tracker/models"
 )
 
 func TestStore(t *testing.T) {
