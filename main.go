@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Bronku/iroon/server"
-	"github.com/Bronku/iroon/store"
+	"github.com/Bronku/cake-order-tracker/server"
+	"github.com/Bronku/cake-order-tracker/store"
 	"github.com/BurntSushi/toml"
 )
 

@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/Bronku/iroon/models"
+	"github.com/Bronku/cake-order-tracker/models"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"

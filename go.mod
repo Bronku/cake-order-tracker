@@ -1,4 +1,4 @@
-module github.com/Bronku/iroon
+module github.com/Bronku/cake-order-tracker
 
 go 1.23.5
 

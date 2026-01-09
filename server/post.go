@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Bronku/iroon/models"
+	"github.com/Bronku/cake-order-tracker/models"
 	"gorm.io/gorm"
 )
 
